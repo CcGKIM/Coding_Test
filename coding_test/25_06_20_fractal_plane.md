@@ -17,6 +17,37 @@
 - 한 셀당 O(s) 연산, 전체 출력 영역 크기 M = (R2−R1+1)×(C2−C1+1)
 - 총 O(M·s), s ≤ 50, M ≤ 10^4 정도까지 충분히 빠르게 처리 가능합니다.
 
+## 나의 코드
+```
+import sys
+sys.setrecursionlimit(50 * 50 * 12)
+
+s, N, K, R1, R2, C1, C2 = map(int, input().split())
+
+matrix = [['0'] * (C2 - C1 + 1) for _ in range(R2 - R1 + 1)]
+
+def fractal(t, r, c, x, y):
+    if t == 0:
+        matrix[x][y] = '0'
+        return
+
+    idx_1 = (N ** t - (K * (N ** (t - 1)))) // 2
+    idx_2 = idx_1 + (K * (N ** (t - 1)))
+
+    if idx_1 <= r < idx_2 and idx_1 <= c < idx_2:
+        matrix[x][y] = '1'
+        return
+    else:
+        fractal(t - 1, r - (r // N ** (t - 1)) * N ** (t - 1), c - (c // N ** (t - 1)) * (N ** (t - 1)), x, y)
+
+for rr in range(R1, R2 + 1):
+    for cc in range(C1, C2 + 1):
+        fractal(s, rr, cc, rr - R1, cc - C1)
+
+for z in matrix:
+    print(''.join(z))
+```
+
 ## 최적화 포인트
 - 재귀 호출 대신 반복문 사용으로 호출 오버헤드 제거
 - `N^t` 연산을 매번 계산하지 않도록 미리 리스트에 저장
